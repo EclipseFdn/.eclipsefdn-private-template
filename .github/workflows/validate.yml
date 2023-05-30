@@ -64,7 +64,15 @@ jobs:
         working-directory: otterdog-configs
 
       - name: Validate Otterdog Configuration and diff HEAD <-> BASE
-        run: ../otterdog/otterdog.sh local-plan ${{ github.repository_owner }} -c otterdog.json --suffix="-BASE" | tee "$GITHUB_WORKSPACE/diff.txt"
+        run: |
+          # use script to enable ansi color output
+          script -q /dev/null --command "../otterdog/otterdog.sh local-plan ${{ github.repository_owner }} -c otterdog.json --suffix=-BASE" | tee "$GITHUB_WORKSPACE/diff-ansi.txt"
+          # filter out ansi escape sequences again, use sed as ansi2txt is not available
+          cat "$GITHUB_WORKSPACE/diff-ansi.txt" | sed -e 's/\x1b\[[0-9;]*m//g' | sed -E 's/^([[:space:]]+)([-+!])/\2\1/g' | sed -E 's/^([[:space:]]+)([~])/!\1/g' > "$GITHUB_WORKSPACE/diff.txt"
+        working-directory: otterdog-configs
+
+      - name: Generate canonical diff
+        run: ../otterdog/otterdog.sh canonical-diff ${{ github.repository_owner }} -c otterdog.json | tee "$GITHUB_WORKSPACE/canonical-diff.txt"
         working-directory: otterdog-configs
 
       # Add a comment to the pull request with the diff
@@ -77,7 +85,9 @@ jobs:
 
             const fs = require('fs');
             const diff = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/diff.txt').toString().trimEnd();
-            var body = "<details>\n<summary>" + commentText + "</summary>\n\n```diff\n" + diff + "\n```\n\n</details>";
+            const canonicalDiff = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/canonical-diff.txt').toString().trimEnd();
+
+            var body = "<details>\n<summary>" + commentText + "</summary>\n\n```diff\n" + diff + "\n```\n\n```diff\n" + canonicalDiff + "\n```\n\n</details>";
             fs.writeFileSync(process.env.GITHUB_STEP_SUMMARY, body);
             fs.writeFileSync(process.env.GITHUB_WORKSPACE + '/comment.txt', body);
 
