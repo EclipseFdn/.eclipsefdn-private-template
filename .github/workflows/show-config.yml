@@ -2,6 +2,11 @@ name: Show Otterdog Configuration
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'otterdog/*.jsonnet'
 
 permissions:
   contents: read
@@ -21,7 +26,7 @@ jobs:
           repository: EclipseFdn/otterdog-configs
           path: otterdog-configs
 
-      # checkout the head ref
+      # checkout the HEAD ref
       - name: Checkout HEAD
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
@@ -46,9 +51,18 @@ jobs:
           poetry install --only=main
         working-directory: otterdog
 
-      - name: Show complete Otterdog Configuration
+      - name: Copy configuration from HEAD ref
         run: |
-          # use script to enable ansi color output
-          script -q /dev/null --command "../otterdog/otterdog.sh show ${{ github.repository_owner }} -c otterdog.json"
+          mkdir orgs
+          cp -r ../${{ github.repository_owner }}/otterdog/* orgs/
         working-directory: otterdog-configs
 
+      - name: Show complete Otterdog Configuration
+        run: ../otterdog/otterdog.sh show ${{ github.repository_owner }} -c otterdog.json | tee "$GITHUB_WORKSPACE/config.txt"
+        working-directory: otterdog-configs
+
+      - name: Upload config.txt
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        with:
+          name: Otterdog config
+          path: config.txt
