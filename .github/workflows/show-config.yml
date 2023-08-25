@@ -22,14 +22,14 @@ jobs:
         run: git clone https://gitlab.eclipse.org/eclipsefdn/security/otterdog.git
 
       - name: Checkout EclipseFdn/otterdog-configs
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           repository: EclipseFdn/otterdog-configs
           path: otterdog-configs
 
       # checkout the HEAD ref
       - name: Checkout HEAD
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           path: ${{ github.repository_owner }}
 
