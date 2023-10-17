@@ -1,6 +1,6 @@
 site_name: Otterdog configuration @ {{ org }}
 site_description: Otterdog configuration @ {{ org }}
-strict: true
+strict: false
 
 site_url: https://{{ org }}.github.io/.eclipsefdn/
 
