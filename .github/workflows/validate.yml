@@ -19,7 +19,7 @@ jobs:
         run: git clone https://gitlab.eclipse.org/eclipsefdn/security/otterdog.git
 
       - name: Checkout EclipseFdn/otterdog-configs
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           repository: EclipseFdn/otterdog-configs
           path: otterdog-configs
@@ -29,14 +29,14 @@ jobs:
       #       however, this validation workflow produces a diff between the changes in the PR with the base ref, thus
       #       doing this is acceptable, see https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
       - name: Checkout HEAD ref of the PR
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           path: ${{ github.repository_owner }}
 
       # checkout the base ref of the PR
       - name: Checkout BASE ref of the PR (target branch)
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ github.base_ref }}
           path: ${{ github.repository_owner }}-base
