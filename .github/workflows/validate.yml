@@ -86,12 +86,15 @@ jobs:
         with:
           script: |
             const commentText = 'Diff for ' + process.env.GITHUB_SHA + ':';
+            const canonicalCommentText = 'Canonical Diff for ' + process.env.GITHUB_SHA + ':';
 
             const fs = require('fs');
             const diff = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/diff.txt').toString().trimEnd();
             const canonicalDiff = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/canonical-diff.txt').toString().trimEnd();
 
-            var body = "<details>\n<summary>" + commentText + "</summary>\n\n```diff\n" + diff + "\n```\n\n```diff\n" + canonicalDiff + "\n```\n\n</details>";
+            var body = "<details>\n<summary>" + commentText + "</summary>\n\n```diff\n" + diff + "\n```\n\n</details>\n" +
+                       "<details>\n<summary>" + canonicalCommentText + "</summary>\n\n```diff\n" + canonicalDiff + "\n```\n\n</details>";
+
             fs.writeFileSync(process.env.GITHUB_STEP_SUMMARY, body);
             fs.writeFileSync(process.env.GITHUB_WORKSPACE + '/comment.txt', body);
 
